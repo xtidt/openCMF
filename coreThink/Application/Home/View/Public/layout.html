@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <block name="title"><title>{$meta_title}｜{:C('WEB_SITE_TITLE')}－{:C('WEB_SITE_SLOGAN')}</title></block>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="author" content="{:C('WEB_SITE_TITLE')}">
+    <meta name="keywords" content="{$meta_keywords}">
+    <meta name="description" content="{$meta_description}">
+    <meta name="generator" content="CoreThink">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-title" content="{:C('WEB_SITE_TITLE')}">
+    <meta name="format-detection" content="telephone=no,email=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <link rel="shortcut icon" type="image/x-icon" href="__ROOT__/favicon.ico">
+    <link rel="apple-touch-icon" type="image/x-icon" href="__ROOT__/logo.png">
+
+    <link rel="stylesheet" type="text/css" href="__CUI__/css/cui.min.css">
+    <link rel="stylesheet" type="text/css" href="__HOME_CSS__/home.css">
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/libs/animate/animate.min.css">
+    <block name="style"></block>
+    <!--[if lt IE 9]>
+        <script src="http://cdn.bootcss.com/html5shiv/r29/html5.min.js"></script>
+        <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <script type="text/javascript" src="__PUBLIC__/libs/jquery/1.x/jquery.min.js"></script>
+</head>
+
+<body>
+    <div class="clearfix hook hook-page-header">
+        {:hook('PageHeader')} <!-- 文档开始钩子 -->
+    </div>
+
+    <block name="wrap">
+        <div class="clearfix full-wrap">
+            <div class="clearfix full-header">
+                <block name="header">
+                    <block name="top-nav">
+                        <nav class="navbar navbar-default navbar-mini top-nav hidden-xs hidden-sm" role="navigation">
+                            <div class="container">
+                                <div class="collapse navbar-collapse">
+                                    <ul class="nav navbar-nav" style="margin-left:-15px">
+                                        <li><a href="#">您好，欢迎来到 {:C('WEB_SITE_TITLE')} ！</a></li>
+                                    </ul>
+                                    <ul class="nav navbar-nav navbar-right">
+                                        <!-- 系统模块导航 开始-->
+                                        <opencmf:nav_list name="vo" pid="0">
+                                            <li>
+                                                <a target="{$vo.target}" href="{$vo.href}">
+                                                    <span> {$vo.title}</span>
+                                                </a>
+                                            </li>
+                                        </opencmf:nav_list>
+                                        <!-- 系统模块导航 结束-->
+                                    </ul>
+                                </div>
+                            </div>
+                        </nav>
+                    </block>
+
+                    <block name="main-nav">
+                        <nav class="navbar navbar-default main-nav" role="navigation">
+                            <div class="container">
+                                <div class="navbar-header">
+                                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse-main">
+                                        <span class="sr-only">切换导航</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <php>if(C('WEB_SITE_LOGO')):</php>
+                                        <a class="navbar-brand" href="{:C('HOME_PAGE')}">
+                                            <img alt="logo" src="{$Think.config.WEB_SITE_LOGO|get_cover}">
+                                        </a>
+                                    <php>else:</php>
+                                        <a class="navbar-brand" href="{:C('HOME_PAGE')}">
+                                            <span>{:C('PRODUCT_LOGO')}</span>
+                                        </a>
+                                    <php>endif;</php>
+                                </div>
+                                <div class="collapse navbar-collapse navbar-collapse-main">
+                                    <ul class="nav navbar-nav navbar-left">
+                                        <li><a href="{:C('HOME_PAGE')}">首页</a></li>
+                                        <cms:category_list name="vo" pid="0" group="1">
+                                            <php>if($vo['_child']):</php>
+                                                <li class="dropdown">
+                                                    <a href="{$vo.href}" class="dropdown-toggle" data-toggle="dropdown" role="button">
+                                                        {$vo.title} <span class="caret"></span>
+                                                    </a>
+                                                    <ul class="dropdown-menu">
+                                                        <volist name="vo._child" id="vo1">
+                                                            <li>
+                                                                <a href="{$vo1.href}">{$vo1.title}</a>
+                                                            </li>
+                                                        </volist>
+                                                    </ul>
+                                                </li>
+                                            <php>else:</php>
+                                                <li>
+                                                    <a href="{$vo.href}">
+                                                        <span> {$vo.title}</span>
+                                                    </a>
+                                                </li>
+                                            <php>endif;</php>
+                                        </cms:category_list>
+                                    </ul>
+
+                                    <ul class="nav navbar-nav navbar-right">
+                                        <present name="_user_auth">
+                                            <li class="dropdown">
+                                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                                    <img class="nav-img img-circle" src="{$_user_auth.avatar|get_cover='avatar'}" alt="{$_user_auth.nickname}">
+                                                    <span">
+                                                        {$_user_auth.nickname}
+                                                        <span class="badge badge-danger">{$_new_message}</span> <!-- 新消息数量 -->
+                                                    </span>
+                                                    <span class="caret"></span>
+                                                </a>
+                                                <ul class="dropdown-menu">
+                                                    <li><a href="{:U('User/Index/home', array('uid' => $_user_auth['uid']), true, true)}"><i class="fa fa-home"></i> 个人主页</a></li>
+                                                    <volist name="_user_nav_main" id="vo_nav">
+                                                        <li><a href="{:U($vo_nav['url'], null, true, true)}" class="{$vo_nav.class}"><i class="{$vo_nav.icon}"></i> {$vo_nav.title}</a></li>
+                                                    </volist>
+                                                    <li role="separator" class="divider"></li>
+                                                    <li><a href="{:U('User/User/logout', null, true, true)}" class="ajax-get"><i class="fa fa-sign-out"></i> 注销登录</a></li>
+                                                </ul>
+                                            </li>
+                                        <else />
+                                            <div class="navbar-right">
+                                                <a class="btn btn-success navbar-btn" data-toggle="modal" href="#register-modal">注册</a>
+                                                <a class="btn btn-primary navbar-btn" data-toggle="modal" href="#login-modal">登录</a>
+                                            </div>
+                                        </present>
+                                    </ul>
+                                </div>
+                            </div>
+                        </nav>
+                    </block>
+                </block>
+            </div>
+
+            <div class="clearfix full-container">
+                <block name="jumbotron">
+                    <div class="jumbotron jumbotron-primary jumbotron-background main-jumbotron text-center">
+                        <h4>简单、高效、卓越 － <span class="small">互联网WEB产品最佳选择</span></h4>
+                    </div>
+                </block>
+
+                <div id="main" class="main">
+                    <block name="main">这里是内容</block>
+                </div>
+            </div>
+
+            <div class="clearfix full-foooter">
+                <block name="footer">
+                    <div class="footer">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-sm-6 col-lg-6">
+                                    <h4>
+                                      <php>if(C('WEB_SITE_LOGO')):</php>
+                                            <img alt="logo" style="width:220px;" src="{$Think.config.WEB_SITE_LOGO|get_cover}">
+                                        <php>else:</php>
+                                            <h3><a href="{:C('WEBSITE_DOMAIN')}">{:C('PRODUCT_LOGO')}</a></h3>
+                                        <php>endif;</php>
+                                    </h4>
+                                    <p class="text-muted">{:C('WEB_SITE_DESCRIPTION')}</p>
+                                </div>
+                                <div class="col-sm-6  col-lg-5 col-lg-offset-1">
+                                    <div class="row">
+                                        <!-- 底部导航 开始 -->
+                                        <cms:footnav_list name="vo">
+                                            <div class="col-xs-4 footnav-list">
+                                                <h4><a>{$vo.title}</a></h4>
+                                                <ul class="list-unstyled">
+                                                     <volist name="vo._child" id="vo1">
+                                                        <li>
+                                                            <a target="_blank" class="text-muted" href="{$vo1.url}">{$vo1.title}</a>
+                                                        </li>
+                                                    </volist>
+                                                </ul>
+                                            </div>
+                                        </cms:footnav_list>
+                                        <!-- 底部导航 结束 -->
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row footer-bottom">
+                                <ul class="list-inline text-center">
+                                    <li><span class="copyright">{:C('WEB_SITE_COPYRIGHT')}</span></li>
+                                    <li><a class="icp" href="http://www.miibeian.gov.cn/" target="_blank">{:C('WEB_SITE_ICP')}</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </block>
+            </div>
+        </div>
+    </block>
+
+    <div class="clearfix hook hook-page-footer">
+        {:hook('PageFooter')} <!-- 文档末尾钩子 -->
+    </div>
+
+    <div class="clearfix full-script">
+        <div class="container-fluid">
+            <include file="$_user_login_modal" /> <!-- 登录弹窗 -->
+            <input type="hidden" id="corethink_home_img" value="__HOME_IMG__">
+            <script type="text/javascript" src="__CUI__/js/cui.min.js"></script>
+            <script type="text/javascript" src="__HOME_JS__/home.js"></script>
+            <block name="script"></block>
+            {:C('WEB_SITE_STATISTICS')} <!-- 站点统计代码 -->
+        </div>
+    </div>
+</body>
+</html>

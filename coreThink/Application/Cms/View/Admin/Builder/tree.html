@@ -1,0 +1,52 @@
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/libs/ztree/css/metroStyle/metroStyle.css">
+<div class="panel-body">
+    <div class="ztree ztree-manual" id="cate-list"></div>
+</div>
+<?php
+    // 获取所有分类
+    $map['status'] = array('egt', '0');  // 禁用和正常状态
+    $map['group'] = array('eq', 1);
+    $data_list = D('Category')->field('id,pid,group,doc_type,title,url,create_time,sort,status')
+               ->where($map)->order('sort asc,id asc')->select();
+
+    // 非系统特殊类型则给标题加上链接以便于进入相应文档列表
+    foreach ($data_list as &$item) {
+        $document_type = D('Type')->find($item['doc_type']);  // 获取当前文档类型
+        if ($document_type['name'] === 'page') {
+            $item['url'] = U('Cms/Category/edit_with_tree', array('id' => $item['id']));
+            $item['target'] = "_self";
+        } else if ($document_type['name'] === 'link') {
+            if (!stristr($item['url'], 'http://') && !stristr($item['url'], 'https://')) {
+                $item['url'] = U($item['url']);
+            }
+        } else if ($document_type['system'] === '0') {
+            $item['url'] = U('Cms/Index/index', array('cid' => $item['id']));
+            $item['target'] = "_self";
+        }
+    }
+
+    // 转换成树状列表
+    $data_list = json_encode($data_list);
+?>
+<script type="text/javascript" src="__PUBLIC__/libs/ztree/js/jquery.ztree.all-3.5.min.js" charset="utf-8"></script>
+<script type="text/javascript">
+    $(function(){
+        //ztree设置
+        var setting = {
+            data:{
+                simpleData: {
+                    enable: true,
+                    idKey: "id",
+                    pIdKey: "pid",
+                    rootPId: 0
+                },
+                key:{
+                    name:'title'
+                }
+            }
+        };
+        zTreeNodes = {$data_list};
+        zTreeObj = $.fn.zTree.init($("#cate-list"), setting, zTreeNodes);
+        zTreeObj.expandAll(true);
+    });
+</script>
